@@ -39,6 +39,7 @@ What has been tried. "Host" is the PC the Host board is plugged into (the contro
 | Dell OptiPlex 7010 | Intel 7 Series/C216 USB 3.0 eXtensible Host Controller | USB 3 | Windows 10 IoT Enterprise LTSC | everything works | Enumeration sometimes flaky |
 | Dell OptiPlex 7010 | Intel 7 Series/C216 USB Enhanced Host Controller | USB 2 | Windows Server 2022 | everything works | (none) |
 | Dell OptiPlex 7010 | Intel 7 Series/C216 USB Enhanced Host Controller | USB 2 | Windows 10 IoT Enterprise LTSC | everything works | (none) |
+| Supermicro H13SSL-NT | AMD USB 3.10 eXtensible Host Controller | USB 3 | Windows 11 Enterprise | everything works | (none) |
 
 **Client**
 
@@ -49,6 +50,7 @@ What has been tried. "Host" is the PC the Host board is plugged into (the contro
 | Dell OptiPlex 7010 | Intel 7 Series/C216 USB Enhanced Host Controller | USB 2 | Windows Server 2022 | yes | yes | yes | yes | yes | (none) |
 | Dell OptiPlex 7010 | Intel 7 Series/C216 USB Enhanced Host Controller | USB 2 | Windows 10 IoT Enterprise LTSC | yes | yes | yes | yes | yes | (none) |
 | Intel SE440BX-2 mainboard | Intel PIIX4E USB Controller | USB 1.1 | Windows Server 2003 | yes | yes | yes | yes | no driver | (none) |
+| Kyocera ECOSYS M6026cdn (printer) | unknown | USB 2 | Kyocera firmware | yes | no use | no use | keyboard only | no use | Storage must be FAT32, with or without an MBR partition table |
 
 "Enumeration sometimes flaky" means: after the device was plugged in or re-enumerated (after a firmware update or a disk change, for
 example) the USB 3 port occasionally shows nothing at all until the device is unplugged and plugged in again or the USB controller is reset.
