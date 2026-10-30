@@ -1,0 +1,27 @@
+<Project>
+
+  <Import Project="$(MSBuildThisFileDirectory)Version.props" />
+
+  <!-- The version data every exe and dll gets (Details tab of the file properties). Title and description are set in each project. -->
+  <PropertyGroup>
+    <Company>Vulpes SARL</Company>
+    <Product>Vulpes Dolch USB-Multi-Tool</Product>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <Copyright>Copyright &#169; 2026, Vulpes</Copyright>
+    <Version>$(ProductVersion)</Version>
+    <AssemblyVersion>$(ProductVersion).0</AssemblyVersion>
+    <FileVersion>$(ProductVersion).0</FileVersion>
+    <InformationalVersion>$(ProductVersion)</InformationalVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <!-- Every project of the solution writes to the same folders: Host-Tool\bin\Debug and Host-Tool\bin\Release (..\bin\<Configuration> seen from a project folder).
+       The folder names carry no target framework / runtime identifier, so the service, the GUI, the command line tool and the tests all end up side by side.
+       The intermediate files (obj) stay in each project. -->
+  <PropertyGroup>
+    <BaseOutputPath>$(MSBuildThisFileDirectory)bin\</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+</Project>

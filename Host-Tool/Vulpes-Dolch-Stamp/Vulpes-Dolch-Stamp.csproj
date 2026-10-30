@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Vulpes-Dolch-Stamp</AssemblyName>
+    <RootNamespace>VulpesDolch.Stamp</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch Version Stamp Tool</AssemblyTitle>
+    <Description>Writes the build stamp (Major.Minor.YYMM.DDXX) of the Vulpes Dolch firmware.</Description>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+</Project>

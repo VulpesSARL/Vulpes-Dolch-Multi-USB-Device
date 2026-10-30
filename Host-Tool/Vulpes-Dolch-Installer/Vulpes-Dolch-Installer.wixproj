@@ -1,0 +1,49 @@
+﻿<Project Sdk="WixToolset.Sdk/6.0.2">
+
+  <!-- Per-machine, 64 bit installer (HeatWave for Visual Studio / WiX 6).
+       Before the MSI is compiled the program is published (Release, self-contained .NET 10, win-x64: the GUI with the settings of its FolderProfile publish profile, the
+       service with the same settings) into obj\publish, the exe files, their assemblies and the companion library are signed with vulpessign, and after the build the MSI is signed too.
+       The version is in ..\Version.props.
+       Signing calls the command "vulpessign" (a script that must be in the PATH); build with -p:SkipSigning=true when there is none. -->
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)' == '' Or '$(Platform)' == 'AnyCPU'">x64</Platform>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <OutputName>Vulpes-Dolch-USB-Multi-Tool</OutputName>
+    <SuppressValidation>false</SuppressValidation>
+    <!-- ICE43 / ICE57 do not know that ProgramMenuFolder is the all-users folder in a per-machine package -->
+    <SuppressIces>ICE91;ICE43;ICE57</SuppressIces>
+    <OutputPath>$(MSBuildProjectDirectory)\..\bin\$(Configuration)\</OutputPath>
+    <PublishRoot>$(MSBuildProjectDirectory)\obj\publish</PublishRoot>
+    <!-- The self-contained builds of the publish go to their own output folder: in the shared Host-Tool\bin\Release they would leave the .NET runtime files behind, and the
+         framework-dependent tools there (Vulpes-Dolch-Stamp, Vulpes-Dolch-Host-CMD) would then fail to start. Forward slashes: a trailing backslash would escape the quote. -->
+    <PublishBuildRoot>$(MSBuildProjectDirectory)/obj/publish-build/</PublishBuildRoot>
+    <ToolRoot>$(MSBuildProjectDirectory)\..</ToolRoot>
+    <DefineConstants>$(DefineConstants);PublishDir=$(PublishRoot);ProductVersion=$(ProductVersion);IconFile=$(ToolRoot)\Multi Device.ico;ActionsDll=$(ToolRoot)\bin-test\$(Configuration)\Vulpes-Dolch-Installer-Actions.CA.dll</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
+
+  <!-- The checks that run before the setup changes anything (GUI running, media loaded). -->
+  <ItemGroup>
+    <ProjectReference Include="..\Vulpes-Dolch-Installer-Actions\Vulpes-Dolch-Installer-Actions.csproj" />
+  </ItemGroup>
+
+  <Target Name="PublishAndSign" BeforeTargets="PreBuildEvent">
+    <RemoveDir Directories="$(PublishRoot)" />
+    <Exec Command="dotnet publish &quot;$(ToolRoot)\Vulpes-Dolch-Host-Tool\Vulpes-Dolch-Host-Tool.csproj&quot; -c Release -p:PublishProfile=FolderProfile -p:NuGetAudit=false -p:BaseOutputPath=&quot;$(PublishBuildRoot)&quot; -o &quot;$(PublishRoot)&quot;" />
+    <Exec Command="dotnet publish &quot;$(ToolRoot)\Vulpes-Dolch-Host-Service\Vulpes-Dolch-Host-Service.csproj&quot; -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishReadyToRun=false -p:NuGetAudit=false -p:BaseOutputPath=&quot;$(PublishBuildRoot)&quot; -o &quot;$(PublishRoot)&quot;" />
+    <Exec Condition="'$(SkipSigning)' != 'true'" Command="call vulpessign &quot;$(PublishRoot)\Vulpes-Dolch-Host-Tool.exe&quot; &quot;$(PublishRoot)\Vulpes-Dolch-Host-Service.exe&quot; &quot;$(PublishRoot)\Vulpes-Dolch-Host-Tool.dll&quot; &quot;$(PublishRoot)\Vulpes-Dolch-Host-Service.dll&quot; &quot;$(PublishRoot)\Vulpes-Dolch-Host-Common.dll&quot;" />
+  </Target>
+
+  <!-- The custom action library is built by the project reference; it is signed before the MSI is compiled and embeds it. -->
+  <Target Name="SignActions" BeforeTargets="Compile">
+    <Exec Condition="'$(SkipSigning)' != 'true'" Command="call vulpessign &quot;$(ToolRoot)\bin-test\$(Configuration)\Vulpes-Dolch-Installer-Actions.CA.dll&quot;" />
+  </Target>
+
+  <Target Name="SignMsi" AfterTargets="Build">
+    <Exec Condition="'$(SkipSigning)' != 'true'" Command="call vulpessign &quot;$(TargetPath)&quot;" />
+  </Target>
+
+</Project>

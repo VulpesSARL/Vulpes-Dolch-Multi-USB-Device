@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>Vulpes_Dolch_Host_Tool</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch USB-Multi-Tool</AssemblyTitle>
+    <Description>Control program of the Vulpes Dolch USB multi device: loads CD and disk images, remote keyboard and mouse.</Description>
+    <ApplicationIcon>..\Multi Device.ico</ApplicationIcon>
+    <Nullable>disable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vulpes-Dolch-Host-Common\Vulpes-Dolch-Host-Common.csproj" />
+  </ItemGroup>
+
+</Project>

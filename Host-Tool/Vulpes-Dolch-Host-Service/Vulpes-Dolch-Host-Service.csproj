@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>Vulpes-Dolch-Host-Service</AssemblyName>
+    <RootNamespace>Vulpes_Dolch_Host_Service</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch Host Service</AssemblyTitle>
+    <Description>Keeps the Vulpes Dolch USB multi device (media, keyboard, mouse) running, independent of the logged-on users.</Description>
+    <ApplicationIcon>..\Multi Device.ico</ApplicationIcon>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vulpes-Dolch-Host-Common\Vulpes-Dolch-Host-Common.csproj" />
+  </ItemGroup>
+
+</Project>

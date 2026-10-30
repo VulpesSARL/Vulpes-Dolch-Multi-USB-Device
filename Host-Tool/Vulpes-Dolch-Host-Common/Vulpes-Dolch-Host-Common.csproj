@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Vulpes-Dolch-Host-Common</AssemblyName>
+    <RootNamespace>VulpesDolch.Host.Common</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch Host Common Library</AssemblyTitle>
+    <Description>Common library of the Vulpes Dolch USB-Multi-Tool: link to the Host device, media (CD, disk, folder), keyboard, mouse, firmware update.</Description>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- NU1900 only says the NuGet vulnerability service of a configured package source could not be reached (offline or credential-protected feeds); it says nothing about the code. -->
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The case mapping table ($UpCase, 65536 16 bit values = 128 KiB) Windows writes into every NTFS volume, captured from a volume Windows repaired; see DiskImageCreator. -->
+    <EmbeddedResource Include="Media\NtfsUpCase.bin" LogicalName="NtfsUpCase.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Disk images of the HDD function: VHDX first, the other formats DiscUtils reads and writes as well. -->
+    <PackageReference Include="DiscUtils.Core" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Vhdx" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Vhd" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Vmdk" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Vdi" Version="0.16.13" />
+    <!-- Creating a new image (partition tables and file systems): NTFS and FAT. -->
+    <PackageReference Include="DiscUtils.Ntfs" Version="0.16.13" />
+    <PackageReference Include="DiscUtils.Fat" Version="0.16.13" />
+  </ItemGroup>
+
+</Project>

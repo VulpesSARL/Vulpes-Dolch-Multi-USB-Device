@@ -1,0 +1,89 @@
+﻿<!-- UpgradeCode must never change: it is what makes a newer MSI replace an installed older one. -->
+<?define UpgradeCode = "6C1E5D3A-8B47-4F0E-9A52-D3B71C94E6F8"?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Vulpes Dolch USB-Multi-Tool" Language="2057" Version="$(var.ProductVersion)" Manufacturer="Vulpes" UpgradeCode="$(var.UpgradeCode)" Scope="perMachine" InstallerVersion="500" ShortNames="no">
+
+    <Launch Condition="Installed OR (VersionNT &gt;= 603)" Message="Vulpes Dolch USB-Multi-Tool needs Windows 10, Windows Server 2019 or newer." />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="MultiDevice.ico" SourceFile="$(IconFile)" />
+    <Property Id="ARPPRODUCTICON" Value="MultiDevice.ico" />
+
+    <!-- Before anything is changed (install, repair, upgrade, removal): the GUI must not be running and the service must not have media loaded in the target PC. -->
+    <Binary Id="InstallerActions" SourceFile="$(ActionsDll)" />
+    <CustomAction Id="CheckSetup" BinaryRef="InstallerActions" DllEntry="CheckSetupPreconditions" Execute="immediate" Return="check" />
+    <InstallUISequence>
+      <Custom Action="CheckSetup" Before="LaunchConditions" />
+    </InstallUISequence>
+
+    <!-- The dialog that asks for the folder; the licence page is skipped. -->
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <UI>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="10" Condition="NOT Installed" />
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="10" />
+    </UI>
+
+    <Feature Id="ProductFeature" Title="Vulpes Dolch USB-Multi-Tool" Level="1">
+      <ComponentGroupRef Id="ProgramFiles" />
+      <ComponentRef Id="GuiExe" />
+      <ComponentRef Id="ServiceExe" />
+      <ComponentRef Id="InstallLocation" />
+    </Feature>
+
+    <!-- The service registers itself (Vulpes-Dolch-Host-Service /install: automatic start, LocalSystem, 5 minute preshutdown hold) and is started by that. /install also
+         accepts a service that is already registered (it updates the program path and the settings), so an install over an older copy, a repair and an upgrade all work.
+         The running service is stopped before the files are replaced or removed. What the program says is written to Vulpes-Dolch-service-install.log in the temp folder
+         of the user who runs the setup. -->
+    <CustomAction Id="InstallService" Directory="INSTALLFOLDER" ExeCommand="&quot;[System64Folder]cmd.exe&quot; /c &quot;&quot;[INSTALLFOLDER]Vulpes-Dolch-Host-Service.exe&quot; /install &gt;&gt; &quot;[TempFolder]Vulpes-Dolch-service-install.log&quot; 2&gt;&amp;1&quot;" Execute="deferred" Impersonate="no" Return="check" />
+    <CustomAction Id="RemoveService" FileRef="ServiceExe.exe" ExeCommand="/uninstall" Execute="deferred" Impersonate="no" Return="ignore" />
+    <InstallExecuteSequence>
+      <Custom Action="CheckSetup" Before="LaunchConditions" />
+      <Custom Action="RemoveService" Before="RemoveFiles" Condition="REMOVE=&quot;ALL&quot;" />
+      <Custom Action="InstallService" After="InstallFiles" Condition="NOT REMOVE" />
+    </InstallExecuteSequence>
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="VulpesFolder" Name="Vulpes">
+        <Directory Id="INSTALLFOLDER" Name="Dolch USB-Multi-Tool" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Vulpes" />
+    </StandardDirectory>
+  </Fragment>
+
+  <Fragment>
+    <!-- Everything the publish produced (the .NET 10 runtime, the companion library, ...) except the two exe files, which have components of their own below. -->
+    <ComponentGroup Id="ProgramFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(PublishDir)\**">
+        <Exclude Files="$(PublishDir)\Vulpes-Dolch-Host-Tool.exe" />
+        <Exclude Files="$(PublishDir)\Vulpes-Dolch-Host-Service.exe" />
+        <Exclude Files="$(PublishDir)\**\*.pdb" />
+      </Files>
+    </ComponentGroup>
+
+    <Component Id="GuiExe" Directory="INSTALLFOLDER" Bitness="always64">
+      <File Id="GuiExe.exe" Source="$(PublishDir)\Vulpes-Dolch-Host-Tool.exe" KeyPath="yes">
+        <Shortcut Id="GuiShortcut" Directory="ApplicationProgramsFolder" Name="Vulpes Dolch USB-Multi-Tool" Icon="MultiDevice.ico" IconIndex="0" Advertise="no" WorkingDirectory="INSTALLFOLDER" />
+      </File>
+      <RemoveFolder Id="RemoveProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+    </Component>
+
+    <!-- The folder the program was installed to: the next setup proposes it again (see the custom action UseEarlierInstallFolder). -->
+    <Component Id="InstallLocation" Directory="INSTALLFOLDER" Bitness="always64">
+      <RegistryKey Root="HKLM" Key="Software\Vulpes\Dolch USB-Multi-Tool" ForceDeleteOnUninstall="yes">
+        <RegistryValue Name="InstallFolder" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+      </RegistryKey>
+    </Component>
+
+    <Component Id="ServiceExe" Directory="INSTALLFOLDER" Bitness="always64">
+      <File Id="ServiceExe.exe" Source="$(PublishDir)\Vulpes-Dolch-Host-Service.exe" KeyPath="yes" />
+      <ServiceControl Id="StopService" Name="VulpesDolchHost" Stop="both" Wait="yes" />
+    </Component>
+  </Fragment>
+</Wix>

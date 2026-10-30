@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Vulpes-Dolch-Host-CMD</AssemblyName>
+    <RootNamespace>VulpesDolch.Host.Cmd</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch Host Command Line Tool</AssemblyTitle>
+    <Description>Command line tool of the Vulpes Dolch USB multi device: firmware update files and firmware updates.</Description>
+    <ApplicationIcon>..\Multi Device.ico</ApplicationIcon>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <WarningLevel>9999</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- NU1900 only says the NuGet vulnerability service of a configured package source could not be reached (offline or credential-protected feeds); it says nothing about the code. -->
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Vulpes-Dolch-Host-Common\Vulpes-Dolch-Host-Common.csproj" />
+  </ItemGroup>
+
+</Project>

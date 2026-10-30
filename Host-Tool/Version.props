@@ -1,0 +1,9 @@
+﻿<Project>
+
+  <!-- The version of the whole program (library, GUI, service, command line tool and the installer): Major.Minor.Build. Change it here, by hand, for every release:
+       the assemblies get Major.Minor.Build.0, the MSI Major.Minor.Build (a higher MSI version upgrades an installed copy). -->
+  <PropertyGroup>
+    <ProductVersion>1.0.4</ProductVersion>
+  </PropertyGroup>
+
+</Project>

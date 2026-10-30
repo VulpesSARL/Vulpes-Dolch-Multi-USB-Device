@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Custom actions (WiX DTF) of the installer: they run before anything is installed and stop the setup when the service still has media loaded in the target PC
+       or when the GUI is running. .NET Framework 4.7.2 because a DTF action runs in the .NET Framework that Windows brings along. -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>Vulpes-Dolch-Installer-Actions</AssemblyName>
+    <RootNamespace>VulpesDolch.InstallerActions</RootNamespace>
+    <AssemblyTitle>Vulpes Dolch Installer Actions</AssemblyTitle>
+    <Description>Checks of the Vulpes Dolch USB-Multi-Tool setup before it changes anything.</Description>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <!-- Not a deliverable of its own (it ends up inside the MSI): Host-Tool\bin-test\Debug and Host-Tool\bin-test\Release. -->
+    <BaseOutputPath>$(MSBuildThisFileDirectory)..\bin-test\</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1900</WarningsNotAsErrors>
+  </PropertyGroup>
+
+  <!-- Content items go into the custom action package; CustomAction.config tells the loader to use the .NET Framework 4 runtime (without it the loader starts the 2.0 runtime and
+       cannot load this assembly: "built by a runtime newer than the currently loaded runtime"). -->
+  <ItemGroup>
+    <Content Include="CustomAction.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Dtf.CustomAction" Version="6.0.2" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+</Project>
